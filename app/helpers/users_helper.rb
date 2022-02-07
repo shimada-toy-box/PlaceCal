@@ -21,6 +21,18 @@ module UsersHelper
   end
 
   def options_for_neighbourhoods
-    policy_scope(Neighbourhood).all.order(:name).pluck(:name, :id)
+    out = policy_scope(Neighbourhood).
+      all.
+      where('name is not null and name != \'\'').
+      order(:name).
+      select(:id, :name).
+      map { |nh| { id: nh.id, name: nh.name } }
+
+      # reject { |r| r[1].empty? }.
+      # map { |nh| { id: nh[0], name: nh[1] } }
+
+    #puts '>>>>>>>>>>>>>'
+    #puts out.to_json[0..1000]
+    out
   end
 end
