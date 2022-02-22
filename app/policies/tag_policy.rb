@@ -14,7 +14,7 @@ class TagPolicy < ApplicationPolicy
   end
 
   def edit?
-    user.root?
+    user.root? || user.tag_admin?
   end
 
   def update?
@@ -23,6 +23,22 @@ class TagPolicy < ApplicationPolicy
 
   def destroy?
     user.root?
+  end
+
+  def permitted_attributes
+    if user.root?
+      %i[name slug description users edit_permission partner_ids]
+    else
+      %i[partner_ids]
+    end
+  end
+
+  def disabled_fields
+    if user.root?
+      %i[partner_ids]
+    else
+      %i[name slug description users edit_permission partner_ids]
+    end
   end
 
   class Scope < Scope
