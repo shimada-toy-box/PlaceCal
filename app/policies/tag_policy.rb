@@ -18,7 +18,7 @@ class TagPolicy < ApplicationPolicy
   end
 
   def update?
-    user.root?
+    user.root? || user.tag_admin?
   end
 
   def destroy?
@@ -27,16 +27,20 @@ class TagPolicy < ApplicationPolicy
 
   def permitted_attributes
     if user.root?
-      %i[name slug description users edit_permission partner_ids]
+      %i[name slug description users edit_permission].push(partner_ids: [])
+    elsif user.tag_admin?
+      %i[].push(partner_ids: [])
     else
-      %i[partner_ids]
+      %i[]
     end
   end
 
   def disabled_fields
     if user.root?
-      %i[partner_ids]
-    else
+      %i[]
+    elsif user.tag_admin?
+      %i[name slug description users edit_permission]
+    else # Should never be hit, but it's useful as a guard
       %i[name slug description users edit_permission partner_ids]
     end
   end

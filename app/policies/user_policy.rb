@@ -41,29 +41,44 @@ class UserPolicy < ApplicationPolicy
   end
 
   def permitted_attributes
-    attrs = [ :first_name,
-              :last_name,
-              :email,
-              :phone,
-              :avatar,
-              partner_ids: []
-            ]
-    if user.root?
-      attrs << :role
-      attrs << :facebook_app_id
-      attrs << :facebook_app_secret
-      attrs << { tag_ids: [] }
-      attrs << { neighbourhood_ids: [] }
-    else
-      attrs
-    end
+    attrs = %i[
+      first_name
+      last_name
+      email
+      phone
+      avatar
+      partner_ids
+    ]
+    root_attrs = %i[
+      role
+      tag_ids
+      neighbourhood_ids
+      facebook_app_id
+      facebook_app_secret
+    ]
+
+    attrs + root_attrs if user.root?
+
+    attrs if user.neighbourhood_admin?
+
+    []
   end
 
-  def permitted_attributes_for_update
-    if user.root?
-      permitted_attributes
-    elsif user.neighbourhood_admin?
-      [ partner_ids: [] ]
-    end
+  # Fields that should be seen, but disabled
+  def disabled_attributes
+    disabled_attrs = %i[
+      first_name
+      last_name
+      email
+      phone
+      avatar
+      role
+      tag_ids
+      neighbourhood_ids
+    ]
+
+    [] if user.root?
+
+    disabled_attrs
   end
 end

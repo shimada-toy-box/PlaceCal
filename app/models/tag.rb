@@ -25,15 +25,4 @@ class Tag < ApplicationRecord
   enumerize :edit_permission,
             in: %i[root all],
             default: :root
-
-  def self.edit_permission_label(value)
-    case value.second
-    when 'root'
-      '<strong>Root</strong>: Only root-level users may assign this tag'.html_safe
-    when 'all'
-      '<strong>All</strong>: Any user may assign this tag'.html_safe
-    else
-      value
-    end
-  end
 end

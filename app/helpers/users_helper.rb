@@ -23,7 +23,7 @@ module UsersHelper
       .where('name is not null and name != \'\'')
       .order(:name)
       .all
-      .pluck(:contextual_name, :id)
+      .collect { |ward| [ward.contextual_name, ward.id] }
   end
 
   def options_for_tags

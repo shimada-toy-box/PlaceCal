@@ -2,37 +2,38 @@
 <%= simple_form_for @tag, url: (@tag.new_record? ? admin_tags_path : admin_tag_path) do |f| %>
   <%= render_component "error", object: @tag %>
 
-  <%= f.input :name, class: "form-control",
+  <%= f.input :name, class: 'form-control',
               disabled: disabled_fields.include?(:name) %>
 
-  <%= f.input :slug, class: "form-control",
+  <%= f.input :slug, class: 'form-control',
               disabled: disabled_fields.include?(:slug) %>
 
-  <%= f.input :description, class: "form-control",
+  <%= f.input :description, class: 'form-control',
               disabled: disabled_fields.include?(:description) %>
 
   <%= f.input :edit_permission,
               as: :radio_buttons,
-              label_method: ->(val){ Tag.edit_permission_label(val) },
+              label_method: ->(val){ edit_permission_label(val) },
               hint: 'Users with this role will be granted access to assign this tag',
               disabled: disabled_fields.include?(:edit_permission) %>
 
-  <%# = f.association :partners, input_html: { class: 'form-control select2' } %>
+  <h2>Tagged Partners</h2>
+  <p>Apply this tag to the given partners</p>
+  <% if disabled_fields.include?(:edit_permission) %>
+    <%# # Literally just create a dummy field, because f.assoc disappears %>
+    <%= f.input :partners, class: 'form-control', disabled: true %>
+  <% else %>
+    <%= f.association :partners, collection: options_for_partners,
+        input_html: { class: 'form-control select2' } %>
+  <% end %>
 
-  <h2>Partners</h2>
-
-  <p>Apply this tag to the given partner</p>
-
-  <div class="partners">
-    <%= f.simple_fields_for :partners do |partner| %>
-      <%= render 'partner_fields', :f => partner %>
+  <span>
+    <br>
+    <br>
+    <%= f.submit "Save", class: "btn btn-primary" %>
+    <% if !@tag.new_record? && policy(@tag).destroy? %>
+      <%= link_to "Destroy", admin_tag_path(@tag), method: :delete, class: "ml-3 btn btn-danger" %>
     <% end %>
-    <div class="links">
-      <%= link_to_add_association 'Add Partner', f, :partners, class: "btn btn-primary btn-sm" %>
-    </div>
-  </div>
-
-  <%= f.submit "Save", class: "btn btn-primary" %><br><br>
-  <%# TODO: work out why this is failing %>
-  <%# button_to "Destroy Tag", @tag, method: :delete, class: "btn btn-danger" %>
+  </span>
+  <br>
 <% end %>
