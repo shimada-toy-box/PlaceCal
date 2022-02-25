@@ -9,7 +9,8 @@ class Partner < ApplicationRecord
 
   # Associations
   has_and_belongs_to_many :users
-  has_and_belongs_to_many :tags, validate: true
+  has_many :partner_tags
+  has_many :tags, through: :partner_tags
   has_many :calendars, dependent: :destroy
   has_many :events
   belongs_to :address, optional: true

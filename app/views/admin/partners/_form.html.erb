@@ -131,9 +131,12 @@
       </div>
       <div class="col-lg-6 col-md-12 tags">
         <h2>Tags</h2>
-        <p>Does this Partner provide any of the following things? (WIP!)</p>
+        <p>Does this Partner provide any of the following things?</p>
 
-        <%= f.association :tags, collection: @tags, as: :check_boxes, include_hidden: false, label: "Facilities" %>
+        <%= f.association :partner_tags,
+                          label: false,
+                          collection: options_for_tags,
+                          input_html: { class: 'form-control select2multi' } %>
 
         <div id="map-pin-div" data-url="<%= image_path('icons/map/map-marker.png') %>"></div>
       </div>

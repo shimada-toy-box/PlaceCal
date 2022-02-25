@@ -3,6 +3,10 @@ jQuery.extend(Behaviors, {
     form: {
       init: function() {
         var map = [];
+
+        // Attach select2 to .select2-multi nodes, for multiple select
+        // oh god this is horrible
+        $('.select2multi').each(function () { $(this).select2({ multiple: true }); });
         
         /* service area bits */
 
